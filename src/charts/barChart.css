@@ -1,0 +1,23 @@
+.tick line {
+    visibility: hidden;
+}
+.d3_xAxis_gray_3px path{
+    stroke:gray;
+    stroke-width: 3px;
+    transform: translateY(-8px);
+    d:path('M 0 6  H 520')
+}
+
+.d3_yAxis_gray_3px path{
+    stroke:gray;
+    stroke-width: 3px;
+    transform: translateX(7px);
+    d:path("M -6 360 V 0")
+}
+.d3_axisMin_gray_3px path{
+    stroke:gray;
+    opacity: 0.5;
+    stroke-width: 0.5px;
+    transform: translateX(0px);
+    d: path('M 0 6  H 520')
+}
