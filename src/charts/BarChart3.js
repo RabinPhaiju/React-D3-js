@@ -1,4 +1,5 @@
 import { useEffect,useState, useRef,Fragment } from "react"
+import './barChart.css'
 import {
   axisBottom,
   axisLeft,
