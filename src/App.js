@@ -1,7 +1,22 @@
-import React from 'react'
+import React,{useRef, useState} from 'react'
 import BarChart3 from './charts/BarChart3'
 
 function App() {
+
+  const ref = useRef(null)
+  const [width,setWidth] = useState(0)
+
+  const resizeWidth = ()=>{
+    let widht = window.innerWidth
+    setWidth(widht)
+  }
+
+  useState(()=>{
+    resizeWidth()
+  },[])
+
+  window.addEventListener('resize',resizeWidth)
+
   const data = [
     {label:'Su',value:1.11},
     {label:'Mo',value:1.59},
@@ -14,8 +29,9 @@ function App() {
   ]
 
   return (
-    <div className="App">
-        <BarChart3 w={600} h={400} data={data} barColor="purple" minValue={1} />
+    <div className="App" ref={ref}>
+    <div>This is Bar chart</div>
+        <BarChart3 w={width} data={data} barColor="purple" minValue={1} />
     </div>
   )
 }
