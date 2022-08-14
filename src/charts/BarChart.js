@@ -1,82 +1,28 @@
-import React, { useRef, useEffect } from 'react'
-import * as d3 from 'd3'
-import './barChart.css'
+import React, { useRef } from 'react'
+import useWidth from "../hook/useWidth";
+import useMediaQuery from '../hook/useMediaQuery'
+import D3BarChart from './D3BarChart'
 
-function BarChart({ width, height, data, margin, barColor="black" }) {
-    const svgref = useRef()
+function BarChart({ isDarkMode, data, chartName = '', isFromChart, barColor = "#1a0267", minValue = 0, isLeftScale = false }) {
+    const colors = ['#312e2c','#3990a1','#3e317d','#c1197e','#f0bd9c','#3dbe1f','#dc4d15','#3d1db2','#51031f'];
+    const {xs,sm,md,lg,xl} = useMediaQuery()
+    const D3ref = useRef(null)
+    const [d3width] = useWidth(D3ref);
+    const dataLengthCheck  = data.length<12?10:14
 
-    useEffect(() => {
-        // setting up the svg container
-        const svg = d3.select(svgref.current)
-            .attr("width", width - margin.left - margin.right)
-            .attr("height", height - margin.top - margin.bottom)
-            .attr("viewBox",[0,0,width,height])
-            // .style("border", "1px solid black")
-
-        // setting the scaling
-        const xScale = d3.scaleBand()
-        .domain(data.map((val,i)=>i))
-        .range([0,width-margin.right-margin.left])
-        // .range([margin.left,width-margin.right])
-        .padding(0.3)//change the widht of bar
-
-        const yScale = d3.scaleLinear()
-        .domain([0,d3.max(data.map(d=>d.value))+1])
-        .range([height,0])
-        // .range([height - margin.bottom, margin.top])
-
-        // setting the svg data
-        svg.append('g')
-        .attr('fill',barColor)
-        // .selectAll('.bar')
-        .selectAll('rect')
-        .data(data)
-        .join('rect')
-        .attr('x',(d,i)=>xScale(i))
-        .attr('y', (d) => yScale(d.value))
-        .attr('height', d => yScale(0) - yScale(d.value))
-        .attr('width',xScale.bandwidth())
-        .attr('transform', `translate(0,${-margin.bottom})`)
-        .attr('class','d3_barchart_rectangle')
-
-        // setting bar value
-        function barText(g) {
-            g.attr('transform', `translate(0,${200})`)
-                .call(d3.axisBottom(xScale).tickFormat(''))
-                .style('border','6px solid red')
-        }
-        svg.append('g').call(barText) 
-
-        svg.append('text')
-        .text('y')
-        .attr('fill','black')
-        .attr('transform',`translate(${xScale.bandwidth()/2-5},${-10})`)
-
-        // setting the axes
-       function xAxis(g){
-        g.attr('transform', `translate(0,${height - margin.bottom+2})`)
-            .call(d3.axisBottom(xScale).tickFormat(i => data[i].name))
-        .attr('font-size','20px')
-       }
-        svg.append('g').call(xAxis) 
-        
-        function yAxis(g){
-            g.attr('transform', `translate(0,${-margin.bottom})`)
-        .call(d3.axisLeft(yScale).ticks(null,data.format))
-        .attr('font-size','16px')
-       }
-        svg.append('g').call(yAxis)
-
-    }, [margin,data,height,width,barColor])
-
+    let width =isFromChart?d3width:sm?d3width:md?(d3width*data.length/dataLengthCheck):(d3width*data.length/dataLengthCheck)
+    let height = d3width / (isFromChart?1.8:sm?1.8:2.2)
 
     return (
-        <div>
-            <svg ref={svgref}></svg>
+        
+        <div ref={D3ref} style={{ backgroundColor: isDarkMode ? '#191919' : '#F5F5F5',
+                                 borderRadius: '5px',display:'flex',justifyContent:'center' }}>
+                <D3BarChart w={width<350?350:width} 
+                            h={height<250?250:height} 
+                            isDarkMode={isDarkMode} chartName={chartName} isFromChart={isFromChart} data={data} 
+                            colors = {colors} barColor={barColor} minValue={minValue} isLeftScale={isLeftScale} />
         </div>
-
     )
-
 }
 
 export default BarChart
